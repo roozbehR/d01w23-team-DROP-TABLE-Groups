@@ -35,9 +35,10 @@ from .utils._param_validation import validate_parameter_constraints
 def clone(estimator, *, safe=True, deepcopy=False):
     """Construct a new unfitted estimator with the same parameters.
 
-    Clone does a deep copy of the model in an estimator
-    without actually copying attached data. It returns a new estimator
-    with the same parameters that has not been fitted on any data.
+    Clone does a shallow or deep copy of the model in an estimator
+    based on the provided input without actually copying attached 
+    data. It returns a new estimator with the same parameters that
+    has not been fitted on any data.
 
     .. versionchanged:: 1.3
         Delegates to `estimator.__sklearn_clone__` if the method exists.
@@ -51,11 +52,15 @@ def clone(estimator, *, safe=True, deepcopy=False):
         If safe is False, clone will fall back to a deep copy on objects
         that are not estimators. Ignored if `estimator.__sklearn_clone__`
         exists.
+    deepcopy: bool, default=False
+        If no deepcopy is required, then the object parameters are not
+        cloned later on in this function once the object itself is cloned
 
     Returns
     -------
     estimator : object
-        The deep copy of the input, an estimator if input is an estimator.
+        The deep/shallow copy of the input, an estimator if input is an
+        estimator.
 
     Notes
     -----
@@ -101,7 +106,7 @@ def _clone_parametrized(estimator, *, safe=True, deepcopy=False):
     if deepcopy:
         for name, param in new_object_params.items():
             new_object_params[name] = clone(param, safe=False)
-            
+
     new_object = klass(**new_object_params)
     params_set = new_object.get_params(deep=False)
 
