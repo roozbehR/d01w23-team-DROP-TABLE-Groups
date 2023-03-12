@@ -133,6 +133,62 @@ def test_clone():
     assert selector is not new_selector
 
 
+def test_clone_deepcopy():
+    # Tests that clone creates a correct deep copy of all input parameters when we pass deepcopy True
+    # We create an estimator, make a copy of its original state
+    # (which, in this case, is the current state of the estimator),
+    # and check that the obtained copy is a correct deep copy.
+
+    from sklearn.feature_selection import SelectFpr, f_classif
+
+    selector = SelectFpr(f_classif, alpha=0.1)
+    new_selector = clone(selector, deepcopy=True)
+
+    assert selector is not new_selector
+
+    orig_selector_params = selector.get_params()
+    new_selector_params = new_selector.get_params()
+
+    assert len(orig_selector_params) == len(new_selector_params)
+    
+    for key in orig_selector_params:
+        orig_selector_val = orig_selector_params[key]
+        new_selector_val = new_selector_params[key]
+
+        assert key in new_selector_params
+        assert orig_selector_val == new_selector_val
+
+        if not _is_immutable(orig_selector_val):
+            assert orig_selector_val is not new_selector_val
+
+
+def test_clone_shallow_copy():
+    # Tests that clone creates a correct shallow copy of the object including its parameters
+    # We create an estimator, make a copy of its original state
+    # (which, in this case, is the current state of the estimator),
+    # and check that the obtained copy is a correct shallow copy.
+
+    from sklearn.feature_selection import SelectFpr, f_classif
+
+    selector = SelectFpr(f_classif, alpha=0.1)
+    new_selector = clone(selector, deepcopy=False)
+
+    assert selector is not new_selector
+
+    orig_selector_params = selector.get_params()
+    new_selector_params = new_selector.get_params()
+
+    assert len(orig_selector_params) == len(new_selector_params)
+    
+    for key in orig_selector_params:
+        orig_selector_val = orig_selector_params[key]
+        new_selector_val = new_selector_params[key]
+
+        assert key in new_selector_params
+        assert orig_selector_val == new_selector_val
+        assert orig_selector_val is new_selector_val
+
+
 def test_clone_2():
     # Tests that clone doesn't copy everything.
     # We first create an estimator, give it an own attribute, and
@@ -773,3 +829,19 @@ def test_estimator_getstate_using_slots_error_message():
 
     with pytest.raises(TypeError, match=msg):
         pickle.dumps(Estimator())
+
+#############################################################################
+# Helper functions
+
+
+# is_immutable checks whether an object is immutable or not
+# It is important to note that there is no foolproof way of determining whether an object is immutable or not in Python. 
+# However, is_immutable is a function that comes close to achieving this.
+# It is worth noting that while using immutable objects as input parameters for the clone function is sufficient for now to ensure that the input parameters are immutable. 
+# it might be necessary to change this in the future as input params themselves may change.
+def _is_immutable(obj):
+    try:
+        hash(obj)
+        return True
+    except TypeError:
+        return False
