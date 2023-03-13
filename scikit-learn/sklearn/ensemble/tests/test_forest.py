@@ -1470,6 +1470,37 @@ def test_warm_start_oob(name):
     check_warm_start_oob(name)
 
 
+def check_no_recompute_oob(name):
+    # Test that the warm start computes oob score when asked.
+    X, y = hastie_X, hastie_y
+    ForestEstimator = FOREST_ESTIMATORS[name]
+    # Use 15 estimators to avoid 'some inputs do not have OOB scores' warning.
+    est = ForestEstimator(
+        n_estimators=15,
+        max_depth=3,
+        warm_start=True,
+        random_state=1,
+        bootstrap=True,
+        oob_score=True,
+    )
+    est.fit(X, y)
+
+    assert hasattr(est, "oob_score_")
+    assert est.oob_score_ != None
+    correct_oob_score_ = est.oob_score_
+
+    est.oob_score_ = None
+
+    est.fit(X, y)
+
+    assert est.oob_score_ == None
+
+
+@pytest.mark.parametrize("name", FOREST_CLASSIFIERS_REGRESSORS)
+def test_no_recompute_oob(name):
+    check_no_recompute_oob(name)
+
+
 def test_dtype_convert(n_classes=15):
     classifier = RandomForestClassifier(random_state=0, bootstrap=False)
 
