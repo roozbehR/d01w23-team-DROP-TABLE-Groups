@@ -62,9 +62,11 @@ def _inplace_contiguous_isotonic_regression(floating[::1] y, floating[::1] w):
             i = k
 
 
-def _make_unique(cnp.ndarray[dtype=floating] X,
-                 cnp.ndarray[dtype=floating] y,
-                 cnp.ndarray[dtype=floating] sample_weights):
+def _make_unique(
+                const floating [::1] X,
+                const floating [::1] y,
+                const floating [::1] sample_weights
+                ):
     """Average targets for duplicate X, drop duplicates.
 
     Aggregates duplicate X values into a single X value where
@@ -72,13 +74,14 @@ def _make_unique(cnp.ndarray[dtype=floating] X,
     targets.
 
     Assumes that X is ordered, so that all duplicates follow each other.
-    """
+    """    
     unique_values = len(np.unique(X))
+    dtype = np.float32 if floating is float else np.float64
 
-    cdef cnp.ndarray[dtype=floating] y_out = np.empty(unique_values,
-                                                     dtype=X.dtype)
-    cdef cnp.ndarray[dtype=floating] x_out = np.empty_like(y_out)
-    cdef cnp.ndarray[dtype=floating] weights_out = np.empty_like(y_out)
+    cdef floating [::1] y_out = np.empty(unique_values,
+                                                     dtype=dtype)
+    cdef cnp.ndarray[dtype=floating] x_out = np.empty(unique_values, dtype=dtype)
+    cdef floating [::1] weights_out =np.empty(unique_values, dtype=dtype)
 
     cdef floating current_x = X[0]
     cdef floating current_y = 0
@@ -88,7 +91,7 @@ def _make_unique(cnp.ndarray[dtype=floating] X,
     cdef int j
     cdef floating x
     cdef int n_samples = len(X)
-    cdef floating eps = np.finfo(X.dtype).resolution
+    cdef floating eps = np.finfo(dtype).resolution
 
     for j in range(n_samples):
         x = X[j]
