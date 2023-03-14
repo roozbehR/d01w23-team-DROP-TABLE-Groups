@@ -430,7 +430,7 @@ def test_clone_protocol():
         def __getattr__(self, name):
             return getattr(self.fitted_estimator, name)
 
-        def __sklearn_clone__(self):
+        def __sklearn_clone__(self, deepcopy):
             return self
 
         def fit(self, *args, **kwargs):
