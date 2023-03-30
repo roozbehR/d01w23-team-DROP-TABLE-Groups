@@ -32,18 +32,24 @@ from sklearn.decomposition import PCA
 
 
 class NaNTag(BaseEstimator):
-    def _more_tags(self):
-        return {"allow_nan": True}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["allow_nan"] = True
+        return tags
 
 
 class NoNaNTag(BaseEstimator):
-    def _more_tags(self):
-        return {"allow_nan": False}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["allow_nan"] = True
+        return tags
 
 
 class NaNTagRandomForest(RandomForestClassifier):
-    def _more_tags(self):
-        return {"allow_nan": True}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["allow_nan"] = True
+        return tags
 
 
 iris = datasets.load_iris()

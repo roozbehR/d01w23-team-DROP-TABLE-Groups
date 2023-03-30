@@ -301,17 +301,17 @@ class TransformedTargetRegressor(RegressorMixin, BaseEstimator):
 
         return pred_trans
 
-    def _more_tags(self):
+    def __sklearn_tags__(self):
         regressor = self.regressor
         if regressor is None:
             from ..linear_model import LinearRegression
 
             regressor = LinearRegression()
 
-        return {
-            "poor_score": True,
-            "multioutput": _safe_tags(regressor, key="multioutput"),
-        }
+        tags = super().__sklearn_tags__()
+        tags["poor_score"] = True
+        tags["multioutput"] = _safe_tags(regressor, key="multioutput")
+        return tags
 
     @property
     def n_features_in_(self):

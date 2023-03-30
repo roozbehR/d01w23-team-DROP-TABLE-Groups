@@ -1267,11 +1267,11 @@ class _BaseNMF(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator,
         """Number of transformed output features."""
         return self.components_.shape[0]
 
-    def _more_tags(self):
-        return {
-            "requires_positive_X": True,
-            "preserves_dtype": [np.float64, np.float32],
-        }
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["requires_positive_X"] = True
+        tags["preserves_dtype"] = [np.float64, np.float32]
+        return tags
 
 
 class NMF(_BaseNMF):

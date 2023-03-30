@@ -49,7 +49,7 @@ from sklearn.utils.estimator_checks import (
     check_classifiers_multilabel_output_format_predict_proba,
     check_dataframe_column_names_consistency,
     check_estimator,
-    check_estimator_get_tags_default_keys,
+    check_estimator_sklearn_tags_default_keys,
     check_estimators_unfitted,
     check_fit_score_takes_y,
     check_no_attributes_set_in_init,
@@ -763,18 +763,18 @@ def test_check_regressor_data_not_an_array():
         )
 
 
-def test_check_estimator_get_tags_default_keys():
+def test_check_estimator_sklearn_tags_default_keys():
     estimator = EstimatorMissingDefaultTags()
     err_msg = (
         r"EstimatorMissingDefaultTags._get_tags\(\) is missing entries"
         r" for the following default tags: {'allow_nan'}"
     )
     with raises(AssertionError, match=err_msg):
-        check_estimator_get_tags_default_keys(estimator.__class__.__name__, estimator)
+        check_estimator_sklearn_tags_default_keys(estimator.__class__.__name__, estimator)
 
     # noop check when _get_tags is not available
     estimator = MinimalTransformer()
-    check_estimator_get_tags_default_keys(estimator.__class__.__name__, estimator)
+    check_estimator_sklearn_tags_default_keys(estimator.__class__.__name__, estimator)
 
 
 def test_check_dataframe_column_names_consistency():

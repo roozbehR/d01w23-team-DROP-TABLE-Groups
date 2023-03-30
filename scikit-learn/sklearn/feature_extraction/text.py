@@ -916,8 +916,10 @@ class HashingVectorizer(
             alternate_sign=self.alternate_sign,
         )
 
-    def _more_tags(self):
-        return {"X_types": ["string"]}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["X_types"] = ["string"]
+        return tags
 
 
 def _document_frequency(X):
@@ -1487,8 +1489,10 @@ class CountVectorizer(_VectorizerMixin, BaseEstimator):
             dtype=object,
         )
 
-    def _more_tags(self):
-        return {"X_types": ["string"]}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["X_types"] = ["string"]
+        return tags
 
 
 def _make_int_array():
@@ -1751,8 +1755,10 @@ class TfidfTransformer(
             value, diags=0, m=n_features, n=n_features, format="csr"
         )
 
-    def _more_tags(self):
-        return {"X_types": ["2darray", "sparse"]}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["X_types"] = ["2darray", "sparse"]
+        return tags
 
 
 class TfidfVectorizer(CountVectorizer):
@@ -2157,5 +2163,8 @@ class TfidfVectorizer(CountVectorizer):
         X = super().transform(raw_documents)
         return self._tfidf.transform(X, copy=False)
 
-    def _more_tags(self):
-        return {"X_types": ["string"], "_skip_test": True}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["X_types"] = ["string"]
+        tags["_skip_test"] = True
+        return tags
