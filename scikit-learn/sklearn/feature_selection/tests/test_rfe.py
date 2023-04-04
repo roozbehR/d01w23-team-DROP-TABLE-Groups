@@ -30,7 +30,7 @@ from sklearn.metrics import make_scorer
 from sklearn.metrics import get_scorer
 
 
-class MockClassifier:
+class MockClassifier(BaseEstimator):
     """
     Dummy classifier to test recursive feature elimination
     """
