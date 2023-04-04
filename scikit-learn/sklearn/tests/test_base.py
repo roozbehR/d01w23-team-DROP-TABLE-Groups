@@ -562,17 +562,17 @@ def test_tag_inheritance():
 
     nan_tag_est = NaNTag()
     no_nan_tag_est = NoNaNTag()
-    assert nan_tag_est._get_tags()["allow_nan"]
-    assert not no_nan_tag_est._get_tags()["allow_nan"]
+    assert nan_tag_est.__sklearn_tags__()["allow_nan"]
+    assert not no_nan_tag_est.__sklearn_tags__()["allow_nan"]
 
     redefine_tags_est = OverrideTag()
-    assert not redefine_tags_est._get_tags()["allow_nan"]
+    assert not redefine_tags_est.__sklearn_tags__()["allow_nan"]
 
     diamond_tag_est = DiamondOverwriteTag()
-    assert diamond_tag_est._get_tags()["allow_nan"]
+    assert diamond_tag_est.__sklearn_tags__()["allow_nan"]
 
     inherit_diamond_tag_est = InheritDiamondOverwriteTag()
-    assert inherit_diamond_tag_est._get_tags()["allow_nan"]
+    assert inherit_diamond_tag_est.__sklearn_tags__()["allow_nan"]
 
 
 def test_raises_on_get_params_non_attribute():
