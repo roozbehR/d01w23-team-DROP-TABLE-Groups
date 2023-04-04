@@ -19,7 +19,7 @@ class MoreTagsEstimator:
 @pytest.mark.parametrize(
     "estimator, err_msg",
     [
-        (BaseEstimator(), "The key xxx is not defined in _get_tags"),
+        (BaseEstimator(), "The key xxx is not defined in __sklearn_tags__"),
         (NoTagsEstimator(), "The key xxx is not defined in _DEFAULT_TAGS"),
     ],
 )
