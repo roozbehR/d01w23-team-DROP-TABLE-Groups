@@ -445,7 +445,7 @@ class _GeneralizedLinearRegressor(RegressorMixin, BaseEstimator):
             base_loss = self._get_loss()
             
             tags = super().__sklearn_tags__()
-            tags["requires_positive_y"] = not _family_instance.in_y_range(-1.0)
+            tags["requires_positive_y"] = not base_loss.in_y_true_range(-1.0)
             return tags
         except (ValueError, AttributeError, TypeError):
             # This happens when the link or power parameter of TweedieRegressor is
