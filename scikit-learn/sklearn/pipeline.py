@@ -751,7 +751,7 @@ class Pipeline(_BaseComposition):
         except (ValueError, AttributeError, TypeError):
             # This happens when the `steps` is not a list of (name, estimator)
             # tuples and `fit` is not called yet to validate the steps.
-            return {}
+            return {"X_types": ["2darray"]}
 
     def get_feature_names_out(self, input_features=None):
         """Get output feature names for transformation.

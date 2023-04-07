@@ -450,7 +450,7 @@ class _GeneralizedLinearRegressor(RegressorMixin, BaseEstimator):
         except (ValueError, AttributeError, TypeError):
             # This happens when the link or power parameter of TweedieRegressor is
             # invalid. We fallback on the default tags in that case.
-            return {}
+            return {"X_types": ["2darray"]}
 
     def _get_loss(self):
         """This is only necessary because of the link and power arguments of the

@@ -995,4 +995,4 @@ def test_deprecated_base_estimator_has_decision_function():
 )
 def test_bagging_allow_nan_tag(bagging, expected_allow_nan):
     """Check that bagging inherits allow_nan tag."""
-    assert bagging._get_tags()["allow_nan"] == expected_allow_nan
+    assert bagging.__sklearn_tags__()["allow_nan"] == expected_allow_nan

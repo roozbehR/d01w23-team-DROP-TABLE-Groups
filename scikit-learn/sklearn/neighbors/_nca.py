@@ -517,5 +517,5 @@ class NeighborhoodComponentsAnalysis(
 
     def __sklearn_tags__(self):
         tags = super().__sklearn_tags__()
-        tags["requires_Y"] = True
+        tags["requires_y"] = True
         return tags

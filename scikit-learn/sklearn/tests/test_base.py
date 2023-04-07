@@ -53,23 +53,30 @@ class T(BaseEstimator):
 
 
 class NaNTag(BaseEstimator):
-    def _more_tags(self):
-        return {"allow_nan": True}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["allow_nan"] = True
+        return tags
 
 
 class NoNaNTag(BaseEstimator):
-    def _more_tags(self):
-        return {"allow_nan": False}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["allow_nan"] = False
+        return tags
+
 
 
 class OverrideTag(NaNTag):
-    def _more_tags(self):
-        return {"allow_nan": False}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["allow_nan"] = False
+        return tags
 
 
 class DiamondOverwriteTag(NaNTag, NoNaNTag):
-    def _more_tags(self):
-        return dict()
+    def __sklearn_tags__(self):
+        return super().__sklearn_tags__()
 
 
 class InheritDiamondOverwriteTag(DiamondOverwriteTag):
