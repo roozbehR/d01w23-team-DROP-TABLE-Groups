@@ -32,12 +32,13 @@ from .utils._estimator_html_repr import estimator_html_repr
 from .utils._param_validation import validate_parameter_constraints
 
 
-def clone(estimator, *, safe=True):
+def clone(estimator, *, safe=True, deepcopy=False):
     """Construct a new unfitted estimator with the same parameters.
 
-    Clone does a deep copy of the model in an estimator
-    without actually copying attached data. It returns a new estimator
-    with the same parameters that has not been fitted on any data.
+    Clone does a shallow or deep copy of the model in an estimator
+    based on the provided input without actually copying attached 
+    data. It returns a new estimator with the same parameters that
+    has not been fitted on any data.
 
     .. versionchanged:: 1.3
         Delegates to `estimator.__sklearn_clone__` if the method exists.
@@ -51,11 +52,15 @@ def clone(estimator, *, safe=True):
         If safe is False, clone will fall back to a deep copy on objects
         that are not estimators. Ignored if `estimator.__sklearn_clone__`
         exists.
+    deepcopy: bool, default=False
+        If no deepcopy is required, then the object parameters are not
+        cloned later on in this function once the object itself is cloned
 
     Returns
     -------
     estimator : object
-        The deep copy of the input, an estimator if input is an estimator.
+        The deep/shallow copy of the input, an estimator if input is an
+        estimator.
 
     Notes
     -----
@@ -67,13 +72,12 @@ def clone(estimator, *, safe=True):
     found in :ref:`randomness`.
     """
     if hasattr(estimator, "__sklearn_clone__") and not inspect.isclass(estimator):
-        return estimator.__sklearn_clone__()
-    return _clone_parametrized(estimator, safe=safe)
+        return estimator.__sklearn_clone__(deepcopy)
+    return _clone_parametrized(estimator, safe=safe, deepcopy=deepcopy)
 
 
-def _clone_parametrized(estimator, *, safe=True):
+def _clone_parametrized(estimator, *, safe=True, deepcopy=False):
     """Default implementation of clone. See :func:`sklearn.base.clone` for details."""
-
     estimator_type = type(estimator)
     # XXX: not handling dictionaries
     if estimator_type in (list, tuple, set, frozenset):
@@ -98,8 +102,11 @@ def _clone_parametrized(estimator, *, safe=True):
 
     klass = estimator.__class__
     new_object_params = estimator.get_params(deep=False)
-    for name, param in new_object_params.items():
-        new_object_params[name] = clone(param, safe=False)
+
+    if deepcopy:
+        for name, param in new_object_params.items():
+            new_object_params[name] = clone(param, safe=False)
+
     new_object = klass(**new_object_params)
     params_set = new_object.get_params(deep=False)
 
@@ -116,7 +123,7 @@ def _clone_parametrized(estimator, *, safe=True):
     # _sklearn_output_config is used by `set_output` to configure the output
     # container of an estimator.
     if hasattr(estimator, "_sklearn_output_config"):
-        new_object._sklearn_output_config = copy.deepcopy(
+        new_object._sklearn_output_config = copy.copy(
             estimator._sklearn_output_config
         )
     return new_object
@@ -250,8 +257,8 @@ class BaseEstimator:
 
         return self
 
-    def __sklearn_clone__(self):
-        return _clone_parametrized(self)
+    def __sklearn_clone__(self, deepcopy):
+        return _clone_parametrized(self, deepcopy=deepcopy)
 
     def __repr__(self, N_CHAR_MAX=700):
         # N_CHAR_MAX is the (approximate) maximum number of non-blank
