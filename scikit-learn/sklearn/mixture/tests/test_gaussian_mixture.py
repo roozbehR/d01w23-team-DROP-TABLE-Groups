@@ -1326,6 +1326,59 @@ def test_gaussian_mixture_precisions_init_diag():
     )
 
 
+def test_gaussian_mixture_all_parameter_init_no_cov():
+    """
+    Check for redundant computations in GaussianMixture initialization through
+    presence or absence of covariances when all initializing values are given.
+    """
+    # generate a toy dataset
+    n_samples = 300
+    rng = np.random.RandomState(0)
+    shifted_gaussian = rng.randn(n_samples, 2) + np.array([20, 20])
+    C = np.array([[0.0, -0.7], [3.5, 0.7]])
+    stretched_gaussian = np.dot(rng.randn(n_samples, 2), C)
+    X = np.vstack([shifted_gaussian, stretched_gaussian])
+
+    # common parameters to check the consistency of precision initialization
+    n_components, covariance_type, reg_covar, random_state = 2, "diag", 1e-6, 0
+
+    # execute the manual initialization to compute the precision matrix:
+    # - run KMeans to have an initial guess
+    # - estimate the covariance
+    # - compute the precision matrix from the estimated covariance
+    resp = np.zeros((X.shape[0], n_components))
+    label = (
+        KMeans(n_clusters=n_components, n_init=1, random_state=random_state)
+        .fit(X)
+        .labels_
+    )
+    resp[np.arange(X.shape[0]), label] = 1
+    weights_init, means_init, covariance = _estimate_gaussian_parameters(
+        X, resp, reg_covar=reg_covar, covariance_type=covariance_type
+    )
+    weights_init /= (n_samples * n_components)
+    precisions_init = 1 / covariance
+
+    gm_with_init = GaussianMixture(
+        n_components=n_components,
+        covariance_type=covariance_type,
+        reg_covar=reg_covar,
+        weights_init=weights_init,
+        means_init=means_init,
+        precisions_init=precisions_init,
+        random_state=random_state,
+    ).fit(X)
+
+    gm_without_init = GaussianMixture(
+        n_components=n_components,
+        covariance_type=covariance_type,
+        reg_covar=reg_covar,
+        random_state=random_state,
+    ).fit(X)
+
+    assert_allclose(gm_without_init.covariances_, covariance)
+
+
 def test_gaussian_mixture_single_component_stable():
     """
     Non-regression test for #23032 ensuring 1-component GM works on only a
