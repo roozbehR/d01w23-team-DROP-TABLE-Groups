@@ -743,13 +743,15 @@ class Pipeline(_BaseComposition):
         """The classes labels. Only exist if the last step is a classifier."""
         return self.steps[-1][1].classes_
 
-    def _more_tags(self):
+    def __sklearn_tags__(self):
         try:
-            return {"pairwise": _safe_tags(self.steps[0][1], "pairwise")}
+            tags = super().__sklearn_tags__()
+            tags["pairwise"] = _safe_tags(self.steps[0][1], "pairwise")
+            return tags
         except (ValueError, AttributeError, TypeError):
             # This happens when the `steps` is not a list of (name, estimator)
             # tuples and `fit` is not called yet to validate the steps.
-            return {}
+            return {"X_types": ["2darray"]}
 
     def get_feature_names_out(self, input_features=None):
         """Get output feature names for transformation.

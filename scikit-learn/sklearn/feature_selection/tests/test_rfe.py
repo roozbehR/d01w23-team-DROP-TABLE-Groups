@@ -30,7 +30,7 @@ from sklearn.metrics import make_scorer
 from sklearn.metrics import get_scorer
 
 
-class MockClassifier:
+class MockClassifier(BaseEstimator):
     """
     Dummy classifier to test recursive feature elimination
     """
@@ -59,8 +59,10 @@ class MockClassifier:
     def set_params(self, **params):
         return self
 
-    def _more_tags(self):
-        return {"allow_nan": True}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["allow_nan"] = True
+        return tags
 
 
 def test_rfe_features_importance():

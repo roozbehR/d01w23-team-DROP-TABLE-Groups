@@ -1690,8 +1690,10 @@ class LarsCV(Lars):
             fit_path=True,
         )
 
-    def _more_tags(self):
-        return {"multioutput": False}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["multioutput"] = False
+        return tags
 
     def fit(self, X, y):
         """Fit the model using X, y as training data.
@@ -2215,8 +2217,10 @@ class LassoLarsIC(LassoLars):
         self.fit_path = True
         self.noise_variance = noise_variance
 
-    def _more_tags(self):
-        return {"multioutput": False}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["multioutput"] = False
+        return tags
 
     def fit(self, X, y, copy_X=None):
         """Fit the model using X, y as training data.

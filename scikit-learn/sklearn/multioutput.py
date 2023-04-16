@@ -251,8 +251,10 @@ class _MultiOutputEstimator(MetaEstimatorMixin, BaseEstimator, metaclass=ABCMeta
 
         return np.asarray(y).T
 
-    def _more_tags(self):
-        return {"multioutput_only": True}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["multioutput_only"] = True
+        return tags
 
 
 class MultiOutputRegressor(RegressorMixin, _MultiOutputEstimator):
@@ -521,9 +523,11 @@ class MultiOutputClassifier(ClassifierMixin, _MultiOutputEstimator):
         y_pred = self.predict(X)
         return np.mean(np.all(y == y_pred, axis=1))
 
-    def _more_tags(self):
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
         # FIXME
-        return {"_skip_test": True}
+        tags["_skip_test"] = True
+        return tags
 
 
 def _available_if_base_estimator_has(attr):
@@ -880,8 +884,11 @@ class ClassifierChain(MetaEstimatorMixin, ClassifierMixin, _BaseChain):
 
         return Y_decision
 
-    def _more_tags(self):
-        return {"_skip_test": True, "multioutput_only": True}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["_skip_test"] = True
+        tags["multioutput_only"] = True
+        return tags
 
 
 class RegressorChain(MetaEstimatorMixin, RegressorMixin, _BaseChain):
@@ -1007,5 +1014,7 @@ class RegressorChain(MetaEstimatorMixin, RegressorMixin, _BaseChain):
         super().fit(X, Y, **fit_params)
         return self
 
-    def _more_tags(self):
-        return {"multioutput_only": True}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["multioutput_only"] = True
+        return tags

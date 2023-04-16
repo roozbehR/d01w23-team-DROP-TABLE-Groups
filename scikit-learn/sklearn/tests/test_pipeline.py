@@ -1497,13 +1497,13 @@ def test_feature_union_warns_unknown_transformer_weight():
 
 
 @pytest.mark.parametrize("passthrough", [None, "passthrough"])
-def test_pipeline_get_tags_none(passthrough):
+def test_pipeline__sklearn_tags__none(passthrough):
     # Checks that tags are set correctly when the first transformer is None or
     # 'passthrough'
     # Non-regression test for:
     # https://github.com/scikit-learn/scikit-learn/issues/18815
     pipe = make_pipeline(passthrough, SVC())
-    assert not pipe._get_tags()["pairwise"]
+    assert not pipe.__sklearn_tags__()["pairwise"]
 
 
 # FIXME: Replace this test with a full `check_estimator` once we have API only

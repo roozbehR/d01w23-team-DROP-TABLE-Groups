@@ -219,7 +219,7 @@ class SequentialFeatureSelector(SelectorMixin, MetaEstimatorMixin, BaseEstimator
                 FutureWarning,
             )
 
-        tags = self._get_tags()
+        tags = self.__sklearn_tags__()
         X = self._validate_data(
             X,
             accept_sparse="csc",
@@ -319,7 +319,7 @@ class SequentialFeatureSelector(SelectorMixin, MetaEstimatorMixin, BaseEstimator
         check_is_fitted(self)
         return self.support_
 
-    def _more_tags(self):
-        return {
-            "allow_nan": _safe_tags(self.estimator, key="allow_nan"),
-        }
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["allow_nan"] = _safe_tags(self.estimator, key="allow_nan")
+        return tags

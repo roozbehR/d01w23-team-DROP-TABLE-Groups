@@ -1,0 +1,1 @@
+from sklearn.tests.test_tags import *

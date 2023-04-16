@@ -440,5 +440,7 @@ class DictVectorizer(TransformerMixin, BaseEstimator):
 
         return self
 
-    def _more_tags(self):
-        return {"X_types": ["dict"]}
+    def __sklearn_tags__(self):
+        tags = super().__sklearn_tags__()
+        tags["X_types"] = ["dict"]
+        return tags
